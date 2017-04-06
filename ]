@@ -1,0 +1,68 @@
+#include "graphlib.h"
+
+MyGraph * newGraph() {
+	MyGraph * graph = (MyGraph*) malloc (sizeof(MyGraph));
+	graph->first = NULL;
+	graph->last = NULL;
+	graph->quantityCell = 0;
+	return graph;
+}
+
+void toPointerNULL(Vertex * pointer) {
+	pointer->next = NULL;
+	pointer->over = NULL;
+	pointer->under = NULL;
+}
+
+void crossVertex(Vertex *a, Vertex *b) {
+	a->under = b;
+	b->over = a;
+}
+
+_Bool addEdge(MyGraph * graph, ItemType pointA, ItemType pointB) {
+	int retorno = 1;
+	
+	//cria os dois novos dados de arestas
+	Vertex * vertexA = (Vertex*) malloc (sizeof(Vertex));
+	vertexA->data = pointA;
+	toPointerNULL(vertexA);
+	Vertex * vertexB = (Vertex*) malloc (sizeof(Vertex));
+	vertexB->data = pointB;
+	toPointerNULL(vertexB);
+	
+	if(graph->first == NULL) {
+		if(pointA == pointB) {
+			vertexA->next = vertexB;
+			graph->first = vertexA;
+			graph->last = vertexA;
+			return 1;
+		}
+		else {
+			crossVertex(vertexA, vertexB);
+			graph->first = vertexA;
+			graph->last = vertexB;
+			return 1;
+		}
+	}
+	else {
+		if(isExists == 0) {
+
+	}
+	
+	
+	return retorno;
+}
+
+void printList(MyGraph * graph) {
+	Vertex * auxV = graph->first;
+	Vertex * auxH;
+	while(auxV != NULL) {
+		printf("%d > ", auxV->data);
+		auxH = auxV->next;
+		while(auxH != NULL) {
+			printf("%d", auxH->data);
+			auxH = auxH->next;
+		}
+		auxV = auxV->under;
+	}
+}

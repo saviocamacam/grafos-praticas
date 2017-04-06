@@ -1,0 +1,73 @@
+_Bool addEdge(MyGraph * graph, ItemType pointA, ItemType pointB) {
+	int retorno = 1;
+	//cria os dois novos dados de arestas
+	addVertex(graph, pointA);
+	addVertex(graph, pointB);
+
+	//Vertex * vertexA = (Vertex*) malloc (sizeof(Vertex));
+	//vertexA->data = pointA;
+	//toPointerNULL(vertexA);
+	Vertex * vertexB = (Vertex*) malloc (sizeof(Vertex));
+	vertexB->data = pointB;
+	toPointerNULL(vertexB);
+
+
+	//if(graph->first == NULL) {
+		if(pointA == pointB) {
+			vertexA->next = vertexB;
+			graph->first = vertexA;
+			graph->last = vertexA;
+			return 1;
+		}
+		else {
+			crossVertex(vertexA, vertexB);
+			Vertex * vertexB2 = (Vertex*) malloc (sizeof(Vertex));
+			vertexB2->data = pointB;
+			toPointerNULL(vertexB2);
+			vertexA->next = vertexB2;
+			graph->first = vertexA;
+			graph->last = vertexB;
+			return 1;
+		}
+//	}
+	else {
+		if(!isExists(graph, pointA)) {
+			printf("Entrou onde nao devia!\n");
+			printf("Nao existe A\n");
+			vertexA->over = graph->last;
+			graph->last->under = vertexA;
+			graph->last = vertexA;
+		}
+		if(!isExists(graph, pointB)) {
+			printf("Nao existe B\n");
+			vertexB->over = graph->last;
+			graph->last->under = vertexB;
+			graph->last = vertexB;
+		}
+		Vertex * aux = graph->first;
+		Vertex * aux2;
+		while(aux != NULL) {
+			if(aux->data == pointA) {
+				aux2 = aux->next;
+				while(aux2 != NULL) {
+					if(aux2->data == pointB) return 0;
+					aux2 = aux2->next;
+				}
+			}
+			aux = aux->under;
+		}
+		aux = graph->first;
+		while(aux != NULL) {
+			if(aux->data == pointA) {
+				Vertex * vertexB2 = (Vertex*) malloc (sizeof(Vertex));
+				vertexB2->data = pointB;
+				toPointerNULL(vertexB2);
+				vertexB2->next = aux->next;
+				aux->next = vertexB2;
+				return 1;
+			}
+			aux = aux->under;
+		}
+	}
+	return retorno;
+}
