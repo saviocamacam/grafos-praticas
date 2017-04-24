@@ -67,5 +67,9 @@ void initializeBFS(MyGraph * queue, MyGraph * graph, int vertexBegining);
 void BFS(MyGraph * queue, MyGraph * graph, int vertexBegining);
 //Funcao que inicializa a DFS
 void initializeDFS(MyGraph * graph);
+//Funcao que gera ordenacao topologica
+MyGraph * topologicalSort(MyGraph * graph);
+//Função que busca e imprime as componentes fortemente conexas
+void stronglyConnectedComponents(MyGraph * graph);
 
 #endif

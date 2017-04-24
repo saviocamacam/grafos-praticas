@@ -1,6 +1,7 @@
 #include "graphlib.h"
 
-int tempo = 0;
+int tempo = 0, stronglyConnectedComponentsVerify=0;
+MyGraph * linkedListSorted;
 
 MyGraph * newGraph() {
 	MyGraph * graph = (MyGraph*) malloc (sizeof(MyGraph));
@@ -225,9 +226,9 @@ void initializeBFS(MyGraph * queue, MyGraph * graph, int vertexBegining) {
 			aux->pi = NULL;
 			addVertex(queue, aux->data); //se comporta como um enqueue
 		}
-		printf("\nAux->data: %d\n", aux->data);
-		printf("Aux->color: %d\n", aux->color);
-		printf("Aux->distance: %d\n", aux->distance);
+		//printf("\nAux->data: %d\n", aux->data);
+		//printf("Aux->color: %d\n", aux->color);
+		//printf("Aux->distance: %d\n", aux->distance);
 		if (aux->pi == NULL) {
 			printf("Aux->pi: NULL\n");
 		}
@@ -260,9 +261,6 @@ void BFS(MyGraph * queue, MyGraph * graph, int vertexBegining) {
 
 	while(queue->quantityCell != 0) {
 		vertexDequeued = dequeue(queue);
-
-
-
 		vertexFound = findVertex(graph, vertexDequeued->data);
 		aux = vertexFound->next;
 
@@ -317,22 +315,27 @@ void DFS(MyGraph * graph, Vertex * vertex) {
 			auxFoundVertex->pi = vertex;
 			DFS(graph, auxFoundVertex);
 		}
+		if(stronglyConnectedComponentsVerify == 1)
+			printf("%d >", auxFoundVertex->data);
 		auxFindEdges = auxFindEdges->next;
 	}
 	vertex->color = 2;
 	tempo = tempo + 1;
 	vertex->final = tempo;
+
+	addVertex(linkedListSorted, vertex->data);
 }
 
 
 void initializeDFS(MyGraph * graph) {
+	linkedListSorted = newGraph();
 	Vertex * aux = graph->first;
 	while(aux != NULL) {
 		aux->color = 0;
 		aux->pi = NULL;
 		aux = aux->under;
 	}
-
+	
 	aux = graph->first;
 	while(aux != NULL) {
 		if (aux->color == 0) {
@@ -340,5 +343,70 @@ void initializeDFS(MyGraph * graph) {
 		}
 		printf("(%d) d: %d f: %d \n", aux->data, aux->distance, aux->final);
 		aux = aux->under;
+	}
+}
+
+MyGraph * topologicalSort(MyGraph * graph) {
+	initializeDFS(graph);
+	printf("Ordem de termino: \n");
+	//printList(linkedListSorted);
+	return linkedListSorted;
+}
+
+MyGraph * computeTranspost(MyGraph * graph) {
+	MyGraph * graphCopied = newGraph();
+
+	Vertex * aux = graph->first;
+	while(aux != NULL) {
+		addVertex(graphCopied, aux->data);
+		Vertex * vertex = findVertex(graphCopied, aux->data);
+		vertex->next = aux->next;
+		aux->next = NULL;
+		aux = aux->under;
+	}
+	
+	Vertex * auxV = graphCopied->first;
+	Vertex * auxH;
+	while(auxV != NULL) {
+		auxH = auxV->next;
+		while(auxH != NULL) {
+			addEdge(graph, auxH->data, auxV->data);
+			auxH = auxH->next;
+		}
+		auxV = auxV->under;
+	}
+	return graphCopied;
+}
+
+void stronglyConnectedComponents(MyGraph * graph) {
+	initializeDFS(graph);
+	MyGraph * graphCopied = computeTranspost(graph);
+	
+
+
+	stronglyConnectedComponentsVerify = 1;
+	int quantityVertex = 0;
+	int maior=-99999, ultimoFinal=99999, ultimoFinal2=999999, ultimoVertice=-9;
+	Vertex * aux = graph->first;
+
+	
+
+	while(quantityVertex != graph->quantityCell) {
+		while(aux != NULL) {
+			if(aux->final > maior && aux->final < ultimoFinal){
+				maior = aux->final;
+				ultimoVertice = aux->data;
+				ultimoFinal2 = aux->final;
+			}
+			aux = aux->under;
+		}
+		
+		
+		Vertex * v = findVertex(graph, ultimoVertice);
+
+		DFS(graph, v);
+		printf("\n");
+		ultimoFinal = ultimoFinal2;
+		quantityVertex++;
 	}
 }
